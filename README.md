@@ -151,7 +151,7 @@ Los siguientes puntos no quedan resueltos por el enunciado. Se documentan aquí 
 
 **Distinción entre error y ausencia de tarifa.** Un parámetro ausente o con formato incorrecto devuelve `400`; la inexistencia de tarifa aplicable devuelve `404`. Un `brand_id` o un `product_id` sin tarifas no se considera un error de entrada, sino ausencia de tarifa, por lo que no se modela ningún catálogo de cadenas ni de productos.
 
-**Formato de las fechas.** Se utiliza `LocalDateTime`, sin zona horaria, coherente con los datos del enunciado. El contrato declara `format: date-time` y la generación está configurada para producir el mismo tipo en la interfaz y en los DTO.
+**Formato de las fechas.** Se utiliza `LocalDateTime`, sin zona horaria, coherente con los datos del enunciado. El contrato declara `format: date-time` y la generación está configurada para producir el mismo tipo en la interfaz y en los DTO. El parámetro `applicationDate` viaja en formato ISO-8601 con separador `T` y sin desfase horario, por ejemplo `2020-06-14T16:00:00`.
 
 **Moneda.** Se incluye en la respuesta aunque el enunciado no la exija entre los campos de salida, ya que forma parte del precio final.
 
@@ -163,15 +163,15 @@ Los siguientes puntos no quedan resueltos por el enunciado. Se documentan aquí 
 
 ## Casos cubiertos
 
-Combinación consultada: `brand_id = 1`, `product_id = 35455`.
+Combinación consultada: `brandId = 1`, `productId = 35455`. Los instantes se indican en el formato exacto que acepta el parámetro `applicationDate`.
 
-| Caso | Instante | Tarifa | Precio |
+| Caso | `applicationDate` | `priceList` | `price` |
 |---|---|---|---|
-| Test 1 | 2020-06-14 10:00:00 | 1 | 35.50 |
-| Test 2 | 2020-06-14 16:00:00 | 2 | 25.45 |
-| Test 3 | 2020-06-14 21:00:00 | 1 | 35.50 |
-| Test 4 | 2020-06-15 10:00:00 | 3 | 30.50 |
-| Test 5 | 2020-06-16 21:00:00 | 4 | 38.95 |
+| Test 1 | `2020-06-14T10:00:00` | 1 | 35.50 |
+| Test 2 | `2020-06-14T16:00:00` | 2 | 25.45 |
+| Test 3 | `2020-06-14T21:00:00` | 1 | 35.50 |
+| Test 4 | `2020-06-15T10:00:00` | 3 | 30.50 |
+| Test 5 | `2020-06-16T21:00:00` | 4 | 38.95 |
 
 Además de esos cinco casos, la suite funcional cubre los instantes de frontera de cada ventana, la respuesta completa con las fechas de aplicación y la divisa, la ausencia de tarifa por fecha fuera de rango, la ausencia de tarifa para un producto sin registros, la falta de un parámetro obligatorio y un parámetro con formato incorrecto.
 
