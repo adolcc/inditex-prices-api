@@ -6,8 +6,8 @@ info:
     Cuando varias tarifas cubren la fecha indicada, se aplica la de mayor prioridad.
   version: 1.0.0
 servers:
-  - url: http://localhost:8080
-    description: Entorno local
+  - url: /
+    description: Mismo origen que sirve la documentación
 tags:
   - name: Prices
     description: Consulta de la tarifa aplicable
