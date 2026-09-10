@@ -1,0 +1,127 @@
+openapi: 3.0.3
+info:
+  title: Prices API
+  description: >
+    Consulta del precio de venta aplicable a un producto de una cadena en una fecha determinada.
+    Cuando varias tarifas cubren la fecha indicada, se aplica la de mayor prioridad.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Entorno local
+tags:
+  - name: Prices
+    description: Consulta de la tarifa aplicable
+paths:
+  /api/v1/prices:
+    get:
+      tags:
+        - Prices
+      operationId: findApplicablePrice
+      summary: Devuelve el precio aplicable a un producto en una fecha
+      description: >
+        Devuelve la tarifa de mayor prioridad cuya ventana de validez contiene la fecha indicada,
+        para el producto y la cadena dados.
+      parameters:
+        - name: applicationDate
+          in: query
+          required: true
+          description: Fecha y hora de aplicación en formato ISO-8601, por ejemplo 2020-06-14T16:00:00.
+          schema:
+            type: string
+            format: date-time
+            example: '2020-06-14T16:00:00'
+        - name: productId
+          in: query
+          required: true
+          description: Identificador del producto.
+          schema:
+            type: integer
+            format: int64
+            example: 35455
+        - name: brandId
+          in: query
+          required: true
+          description: Identificador de la cadena del grupo.
+          schema:
+            type: integer
+            format: int32
+            example: 1
+      responses:
+        '200':
+          description: Tarifa aplicable encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PriceResponse'
+        '400':
+          description: Parámetros ausentes o con formato incorrecto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: No existe ninguna tarifa aplicable para los parámetros indicados
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    PriceResponse:
+      type: object
+      required:
+        - productId
+        - brandId
+        - priceList
+        - startDate
+        - endDate
+        - price
+        - currency
+      properties:
+        productId:
+          type: integer
+          format: int64
+          description: Identificador del producto.
+          example: 35455
+        brandId:
+          type: integer
+          format: int32
+          description: Identificador de la cadena del grupo.
+          example: 1
+        priceList:
+          type: integer
+          format: int32
+          description: Identificador de la tarifa aplicada.
+          example: 2
+        startDate:
+          type: string
+          format: date-time
+          description: Inicio de la ventana de validez de la tarifa aplicada.
+          example: '2020-06-14T15:00:00'
+        endDate:
+          type: string
+          format: date-time
+          description: Fin de la ventana de validez de la tarifa aplicada.
+          example: '2020-06-14T18:30:00'
+        price:
+          type: number
+          description: Precio final de venta.
+          example: 25.45
+        currency:
+          type: string
+          description: Código ISO de la divisa.
+          example: EUR
+    ErrorResponse:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: Código estable del error.
+          example: PRICE_NOT_FOUND
+        message:
+          type: string
+          description: Descripción legible del error.
+          example: No existe ninguna tarifa aplicable para los parámetros indicados

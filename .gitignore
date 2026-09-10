@@ -1,0 +1,8 @@
+target/
+privado/
+/recomendaciones.md
+
+.idea/
+*.iml
+.vscode/
+.DS_Store
